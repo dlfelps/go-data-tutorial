@@ -46,10 +46,10 @@ func PrintNote(text string) {
 // PrintCode prints a code block with syntax highlighting
 func PrintCode(code string) {
 	fmt.Println()
-	
+
 	// Trim leading and trailing newlines
 	code = strings.Trim(code, "\n")
-	
+
 	// Print the code block
 	fmt.Println("```go")
 	codeStyle.Println(code)

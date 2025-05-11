@@ -22,30 +22,30 @@ type assertions, and common conversion patterns.`,
 
 func showTypeConversion() {
 	printer.PrintHeader("Type Conversion in Go")
-	
+
 	printer.PrintSection("Basic Type Conversion")
 	fmt.Println("Go requires explicit type conversion between most types, even related ones.")
 	fmt.Println("This is to prevent subtle bugs from implicit conversions.")
 	printer.PrintCode(examples.BasicConversion)
-	
+
 	printer.PrintSection("Numeric Type Conversion")
 	printer.PrintCode(examples.NumericConversion)
-	
+
 	printer.PrintSection("String Conversions")
 	printer.PrintCode(examples.StringConversion)
-	
+
 	printer.PrintSection("Interface Type Assertions")
 	printer.PrintCode(examples.InterfaceConversion)
-	
+
 	printer.PrintSection("Type Conversions with Structs")
 	printer.PrintCode(examples.StructConversion)
-	
+
 	printer.PrintSection("Using the strconv Package")
 	printer.PrintCode(examples.StrconvExample)
-	
+
 	printer.PrintSection("Common Pitfalls")
 	printer.PrintCode(examples.ConversionPitfalls)
-	
+
 	printer.PrintSection("Best Practices")
 	fmt.Println("- Always check for potential overflow when converting between numeric types")
 	fmt.Println("- Handle errors when converting strings to numbers")
