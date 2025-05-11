@@ -1,0 +1,39 @@
+modules = ["go"]
+
+[nix]
+channel = "stable-24_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "GoTypesLearn"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "go-app"
+
+[[workflows.workflow]]
+name = "GoTypesLearn"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "go run main.go"
+
+[[workflows.workflow]]
+name = "go-app"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "go run main.go"
+
+[deployment]
+run = ["sh", "-c", "go run main.go"]
