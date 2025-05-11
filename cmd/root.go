@@ -45,7 +45,8 @@ func showWelcomeMessage() {
         examples.Println("  gotypeslearn basic       - Learn about basic data types")
         examples.Println("  gotypeslearn composite   - Learn about composite data types")
         examples.Println("  gotypeslearn interface   - Learn about interfaces")
-        examples.Println("  gotypeslearn conversion  - Learn about type conversion\n")
+        examples.Println("  gotypeslearn conversion  - Learn about type conversion")
+        fmt.Println()
         
         tip := color.New(color.FgHiMagenta, color.Italic)
         tip.Println("Tip: Add --help to any command for more information")
