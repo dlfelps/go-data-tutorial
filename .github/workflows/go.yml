@@ -1,0 +1,116 @@
+name: Go
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.19', '1.20', '1.21']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          
+      - name: Install golint
+        run: go install golang.org/x/lint/golint@latest
+        
+      - name: Lint
+        run: golint -set_exit_status ./...
+
+  govet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          
+      - name: Go Vet
+        run: go vet ./...
+
+  gofmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          
+      - name: Check gofmt
+        run: |
+          gofmt_files=$(gofmt -l .)
+          if [[ -n "${gofmt_files}" ]]; then
+            echo "These files need to be formatted with gofmt:"
+            echo "${gofmt_files}"
+            exit 1
+          fi
+
+  release:
+    needs: [build, lint, govet, gofmt]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          
+      - name: Build for multiple platforms
+        run: |
+          platforms=("windows/amd64" "linux/amd64" "linux/arm64" "darwin/amd64" "darwin/arm64")
+          for platform in "${platforms[@]}"; do
+            platform_split=(${platform//\// })
+            GOOS=${platform_split[0]}
+            GOARCH=${platform_split[1]}
+            output_name="gotypeslearn-$GOOS-$GOARCH"
+            if [ $GOOS = "windows" ]; then
+              output_name+=".exe"
+            fi
+            env GOOS=$GOOS GOARCH=$GOARCH go build -o $output_name
+            echo "Built for $GOOS/$GOARCH"
+          done
+          
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            gotypeslearn-windows-amd64.exe
+            gotypeslearn-linux-amd64
+            gotypeslearn-linux-arm64
+            gotypeslearn-darwin-amd64
+            gotypeslearn-darwin-arm64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
